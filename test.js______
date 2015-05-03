@@ -1,0 +1,49 @@
+function a (b, c) {
+    function k() {
+        a[1].b[undefined].c();
+
+        b.d[12] = a;
+
+        math = 1 + (3 * 2 / 10 % t) - ++p;
+
+        if (k === 0) {
+            b();
+        }
+
+        if ("undefined") a(); else b();
+
+        while (true) {
+            b(); c();
+        }
+
+        while (false) a();
+
+        t = 23;
+
+        return 1;
+    }
+
+    var d = {
+        a: 1,
+        b: 2,
+        c: true,
+        d: "text",
+        e: undefined
+    };
+
+    f(x, true, undefined);
+
+    var uninitialized;
+
+    var list = [1,2,3,4];
+
+    var anon1 = function() {
+
+    };
+
+    var anon2 = function anon2() {
+
+    };
+
+    return;
+}

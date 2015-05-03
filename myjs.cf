@@ -1,0 +1,107 @@
+entrypoints Program ;
+
+Progr.          Program ::= [Stmt] ;
+
+[].             [Stmt]  ::= ;
+(:[]).          [Stmt]  ::= Stmt;
+(:).            [Stmt]  ::= Stmt [Stmt];
+
+NoIdent.        MaybeIdent ::= ;
+JustIdent.      MaybeIdent ::= Ident;
+
+VarDecl.        Decl    ::= "var" Ident ";";
+VarDeclAssign.  Decl    ::= "var" Ident "=" Expr ";";
+FunDecl.        Decl    ::= FunExpr;
+CS.             CompoundStmt    ::= "{" [Stmt] "}";
+
+CSS.            Stmt    ::= CompoundStmt;
+ExprStmt.       Stmt    ::= Expr ";";
+DeclStmt.       Stmt    ::= Decl;
+EmptyStmt.      Stmt    ::= ";";
+
+QIdent.         Lvalue ::= [QIdentPart];
+IdentPart.      QIdentPart ::= IIdent;
+(:[]).          [QIdentPart] ::= QIdentPart;
+(:).            [QIdentPart] ::= QIdentPart "." [QIdentPart];
+
+IIdentBare.     IIdent ::= Ident;
+IIdentIndexed.  IIdent ::= Ident "[" Expr "]";
+
+ParamNameList.  ParamNames   ::= "(" [Ident] ")";
+[].             [Ident]  ::= ;
+(:[]).          [Ident]  ::= Ident;
+(:).            [Ident]  ::= Ident "," [Ident] ;
+
+ParamList.      Params   ::= "(" [Param] ")";
+ParamExpr.      Param    ::= Expr;
+[].             [Param]  ::= ;
+(:[]).          [Param]  ::= Param;
+(:).            [Param]  ::= Param "," [Param] ;
+
+KVP.            KeyValuePair ::= Key ":" Expr;
+
+KeyIdent.       Key ::= Ident;
+KeyString.      Key ::= String;
+
+[].             [KeyValuePair]  ::= ;
+(:[]).          [KeyValuePair]  ::= KeyValuePair;
+(:).            [KeyValuePair]  ::= KeyValuePair "," [KeyValuePair];
+
+
+IntLiteral.     Literal ::= Integer;
+StringLiteral.  Literal ::= String;
+TrueLiteral.    Literal ::= "true";
+FalseLiteral.    Literal ::= "false";
+UndefinedLiteral. Literal ::= "undefined";
+ObjectLiteral.  Literal    ::= "{" [KeyValuePair] "}" ;
+ArrayLiteral.   Literal    ::= "[" [Param] "]";
+
+Fun.                FunExpr ::= "function" MaybeIdent ParamNames CompoundStmt;
+FunExpression.      Expr    ::= FunExpr;
+
+AssignExpr.         Expr    ::= Lvalue "=" Expr;
+CondExpr.           Expr3   ::= Expr4 "?" Expr ":" Expr3;
+LOrExpr.            Expr4   ::= Expr4 "||" Expr5;
+LAndrExpr.          Expr5   ::= Expr5 "&&" Expr6;
+BitOrExpr.          Expr6   ::= Expr6 "|" Expr7;
+BitXorExpr.         Expr7   ::= Expr7 "^" Expr8;
+BitAndExpr.         Expr8   ::= Expr8 "&" Expr9;
+EqExpr.             Expr9   ::= Expr9 "===" Expr10;
+NeqExpr.            Expr9   ::= Expr9 "!==" Expr10;
+LessExpr.           Expr10  ::= Expr10 "<" Expr11;
+GreaterExpr.        Expr10  ::= Expr10 ">" Expr11;
+LeqExpr.            Expr10  ::= Expr10 "<=" Expr11;
+GeqExpr.            Expr10  ::= Expr10 ">=" Expr11;
+ShlExpr.            Expr11  ::= Expr11 "<<" Expr12;
+ShrExpr.            Expr12  ::= Expr12 ">>" Expr13;
+PlusExpr.           Expr12  ::= Expr12 "+" Expr13;
+MinusExpr.          Expr12  ::= Expr12 "-" Expr13;
+TimesExpr.          Expr13  ::= Expr13 "*" Expr14;
+DivExpr.            Expr13  ::= Expr13 "/" Expr14;
+ModExpr.            Expr13  ::= Expr13 "%" Expr14;
+PreincExpr.         Expr14  ::= "++" Expr15;
+PredecExpr.         Expr14  ::= "--" Expr15;
+PreopExpr.          Expr14  ::= UnaryOp Expr15;
+TypeofExpr.         Expr14  ::= "typeof" Expr15;
+ParenExpr.          Expr15  ::= "(" Expr ")";
+CallExpr.           Expr16  ::= Lvalue Params;
+LiteralExpr.        Expr17  ::= Literal;
+EvalExpr.           Expr18  ::= Lvalue;
+
+NegOp.              UnaryOp ::= "!";
+TildeOp.            UnaryOp ::= "~";
+
+IfStmt.             Stmt  ::= "if" "(" Expr ")" Stmt ElseClause;
+Else.               ElseClause ::= "else" Stmt ;
+ElseEmpty.          ElseClause ::= ;
+
+WhileStmt.          Stmt ::= "while" "(" Expr ")" Stmt;
+ThrowStmt.          Stmt ::= "throw" Expr;
+TryCatchStmt.       Stmt ::= "try" CompoundStmt "catch" "(" Ident ")" CompoundStmt;
+ReturnStmt.         Stmt ::= "return" Expr ";";
+EmptyReturnStmt.    Stmt ::= "return;";
+
+coercions Expr 18 ;
+
+comment "//" ;
+comment "/*" "*/" ;

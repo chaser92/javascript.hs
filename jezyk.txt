@@ -1,0 +1,27 @@
+Język opisany załączoną gramatyką (zgodną z BNFC) jest to lekko okrojona wersja JavaScript. W stosunku do JavaScript (wersja ES3) nie są obsługiwane w szczególności następujące funkcje:
+
+- operatory == i != (bez sprawdzania typu), są === i !==
+- konstrukcja do { ... } while(...)
+- wywoływanie wyniku wyrażenia jako funkcji (function() { ... })() - lewa strona operatora wywołania musi być l-wartością
+- switch
+- pętla for
+- null
+- typ liczbowy jest całkowity zamiast zmiennoprzecinkowego, jak domyślnie w JS
+- operator instanceof, prototypy, operator new (ogólniej: sprawy związane z OO)
+- semantyka operatorów arytmetycznych, logicznych itp. w przypadku zastosowania na nietypowych operandach (np. [] + 12) może skutkować innymi rezultatami niż w ES3 (ale sensownymi)
+- wymagany jest średnik wszędzie po instrukcjach (brak tego wymagania w ES3)
+- nie można tworzyć zmiennych globalnych poprzez pominięcie "var"
+- biblioteka standardowa została okrojona do funkcji console.log, ponadto można wywoływać na wszystkim metodę toString()
+- nie można odwoływać się operatorem kwalifikowania (.) do wyniku wyrażenia, tylko l-wartości (np. nie zadziała: document.getElementById("div").toString())
+- literały napisowe mogą być tylko zapisywane przy użyciu cudzysłowia
+- brak operatora: void
+
+Są zaś obsługiwane (z ciekawszych rzeczy):
+- przekazywanie funkcji jako parametr
+- obiekty (typu JSON)
+- domknięcia
+- definiowanie funkcji w funkcji
+- obsługa wyjątków (try ... catch) w JS są najczęściej to obiekty klasy Error, tu będą to napisy
+- scoping
+
+i być może inne ograniczenia, o których zapomniałem tu napisać, ale są mało sensowne w kontekście tego zadania.
