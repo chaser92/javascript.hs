@@ -198,6 +198,11 @@ iExpr (TimesExpr e1 e2) = do
       v2 <- iExpr e2
       return $ v1 * v2
 
+iExpr (DivExpr e1 e2) = do
+      v1 <- iExpr e1
+      v2 <- iExpr e2
+      return $ v1 / v2
+
 iExpr (EqExpr e1 e2) = do
       v1 <- iExpr e1
       v2 <- iExpr e2

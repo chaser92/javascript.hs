@@ -52,20 +52,22 @@ instance Num Val where
          signum (FunctionVal _ _ _) = 1
          signum (BuiltinFunctionVal _) = 1
 
---instance Fractional Val where
-         -- (/) (IntVal i1) (IntVal 0) = StringVal "NaN"
---         (/) (IntVal i1) (IntVal i2) = IntVal (i1 / i2)
+instance Fractional Val where
+         (/) (IntVal i1) (IntVal 0) = StringVal "NaN"
+         (/) (IntVal i1) (IntVal i2) = IntVal (i1 `div` i2)
+         (/) _ _ = StringVal "NaN"
+         fromRational _ = UndefinedVal
 
 instance Ord Val where
          (<) (IntVal i1) (IntVal i2) = i1 < i2
          (<) (StringVal i1) (StringVal i2) = i1 < i2
          (<) (BoolVal b1) (BoolVal b2) = b1 < b2
-         (<) a1 a2 = False
+         (<) _ _ = False
          
          (<=) (IntVal i1) (IntVal i2) = i1 <= i2
          (<=) (StringVal i1) (StringVal i2) = i1 <= i2
          (<=) (BoolVal b1) (BoolVal b2) = b1 <= b2
-         (<=) a1 a2 = False
+         (<=) _ _ = False
 
 instance Eq Val where
          (==) (IntVal i1) (IntVal i2) = i1 == i2
