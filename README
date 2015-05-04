@@ -1,0 +1,12 @@
+Rozwiązanie zaprojektowałem w następujący sposób:
+za pomocą parsera i przykładowego programu wygenerowanego przez BNFC napisałem moduł, który otrzymuje drzewo składni i zwraca wynik programu - całe wyjście na konsolę lub tekst błędu.
+
+Program przetwarza drzewo, wykonując odpowiednie funkcje dla danych konstrukcji składniowych. Kontekst przechowywany jest przy pomocy monady połączonej z State i transformatorów ReaderT i ErrorT. State odpowiada za "magazyn programu", Reader za środowisko, w jakim dana instrukcja jest wykonywana, a ErrorT umożliwia rzucanie błędów zarówno przez użytkownika, jak i spowodowanych niepoprawnym działaniem programu interpretowanego. Nie ma rozróżnienia błędów użytkownika i pozostałych, każdy z błędów może być przechwycony i obsłużony.
+Zastosowanie transformatorów monad umożliwiło mi pisanie programu w sposób wygodny i czytelny, usuwając konieczność przenoszenia kontekstu za pomocą argumentów funkcji.
+Zgodnie z naturą języka JS rozwiązanie nie obejmuje analizy statycznej, ani żadnej formy preprocessingu. Deklaracje i instrukcje są przetwarzane zgodnie z kolejnością ich wystąpienia w programie, i dopiero w momencie ich wywołania.
+Pisząc interpreter starałem się zachować jak najwięcej semantyki języka JS, dlatego też możliwe jest wykonywanie operacji arytmetycznych na dowolnych operandach (wliczając w to dzielenie przez zero, które wylicza się do NaN).
+Tak jak w JS, funkcje są obywatelami pierwszego rzędu (tak to się tłumaczy?) więc w szczególności można je zwracać i przekazywać jako argument, także w formie anonimowej. Funkcja związana jest ze środowiskiem, w jakim została zadeklarowana, co umożliwia domknięcia.
+
+Dostępna jest funkcja systemowa log() przyjmująca dowolną liczbę dowolnych argumentów. Jest to jedyna dostępna funkcja w ramach biblioteki standardowej. Wyjście nie jest realizowane od razu - program nie wykonuje się w monadzie IO. W razie wystąpienia nieobsłużonego błędu wyjście nie pojawi się w ogóle.
+
+Nie zaimplementowałem tablic; ale tablice w JS niezbyt różnią się do obiektów od strony interfejsu użytkownika. W szczególności obiekty zaimplementowane z powodzeniem służą jako tablice, a także słowniki.

@@ -68,16 +68,20 @@ iDecl (VarDecl (Ident name)) = do
 
 iDecl (VarDeclAssign (Ident name) expr) = do
       env <- ask 
-      r <- Env.assign name
+      newEnv <- Env.assign name
       val <- iExpr expr
-      local (\_ -> r) (Env.set name val)
-      return r
+      local (\_ -> newEnv) (Env.set name val)
+      return newEnv
 
 iDecl (FunDecl fun@(Fun ident _ _)) = do
       env <- ask
       case ident of
            NoIdent -> return env
-           JustIdent id -> iDecl (VarDeclAssign id (FunExpression fun))
+           JustIdent (Ident id) -> do
+                     newEnv <- Env.assign id
+                     (FunctionVal params stmt e) <- iExpr (FunExpression fun)
+                     local (\_ -> newEnv) (Env.set id (FunctionVal params stmt newEnv))
+                     return newEnv
 
 
 iStmt (CSS (CS statements)) = _exec statements where

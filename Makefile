@@ -1,9 +1,8 @@
 all:
-	cabal update
-	cabal install mtl
+	cabal install transformers mtl
 	happy -gca Parmyjs.y
 	alex -g Lexmyjs.x
-	ghc --make interpreter.hs -o interpreter
+	ghc --make Interpreter.hs -o interpreter
 
 clean:
 	-rm -f interpreter *.log *.aux *.hi *.o *.dvi
