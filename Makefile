@@ -1,10 +1,10 @@
 all:
 	happy -gca Parmyjs.y
 	alex -g Lexmyjs.x
-	ghc --make Testmyjs.hs -o Testmyjs
+	ghc --make interpreter.hs -o interpreter
 
 clean:
-	-rm -f *.log *.aux *.hi *.o *.dvi
+	-rm -f interpreter *.log *.aux *.hi *.o *.dvi
 	-rm -f Docmyjs.ps
 
 distclean: clean

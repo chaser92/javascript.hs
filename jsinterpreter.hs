@@ -11,9 +11,7 @@ import Control.Monad.Trans.Except
 import Control.Monad.Trans.Reader
 import Control.Monad.State
 
-exec (Progr stmts) = case runState (runExceptT (runReaderT (_exec stmts) Env.empty)) Mem.empty of
-     (Left err, _) -> putStrLn $ "Runtime error: " ++ (show err)
-     (Right output, _) -> putStrLn $ show output
+exec (Progr stmts) = runState (runExceptT (runReaderT (_exec stmts) Env.empty)) Mem.empty
      where _exec stmts = do
            Mem.init
            env <- iDecl (VarDeclAssign (Ident "output") (LiteralExpr (StringLiteral "")))
