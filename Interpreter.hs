@@ -44,7 +44,6 @@ printOutputAndExit (Left err, _) = do
 printOutputAndExit (Right output, _) = do
                    putStr $ show output
                    exitSuccess
-                   ls
                    
 showTree :: (Show a, Print a) => Int -> a -> IO ()
 showTree v tree

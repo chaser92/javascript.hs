@@ -1,4 +1,6 @@
 all:
+	cabal update
+	cabal install mtl
 	happy -gca Parmyjs.y
 	alex -g Lexmyjs.x
 	ghc --make interpreter.hs -o interpreter
