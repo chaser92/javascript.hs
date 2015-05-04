@@ -7,8 +7,6 @@ import Control.Monad.Trans.Except
 import qualified Data.Map as M
 import qualified Memory as Mem
 
-type Var = String
-type Env = M.Map Var Mem.Loc
 
 empty = M.empty
 

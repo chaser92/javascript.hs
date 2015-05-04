@@ -4,7 +4,11 @@ import qualified Data.Map as M
 import Data.List
 import Absmyjs
 
-data Val = UndefinedVal | StringVal String | IntVal Integer | BoolVal Bool | ObjectVal (M.Map String Val) | FunctionVal [String] Stmt
+type Loc = Int
+type Var = String
+type Env = M.Map Var Loc
+
+data Val = UndefinedVal | StringVal String | IntVal Integer | BoolVal Bool | ObjectVal (M.Map String Val) | FunctionVal [String] CompoundStmt Env | BuiltinFunctionVal String
 
 instance Show Val where
          show (StringVal s) = s
@@ -14,8 +18,9 @@ instance Show Val where
          show UndefinedVal = "undefined"
          show (ObjectVal om) = "{" ++ (intercalate ", " list) ++ "}"
               where list = M.foldWithKey (\key value result -> ("\"" ++ key ++ "\": " ++ (stringify value)):result) [] om
-         show (FunctionVal args _) = "[function(" ++ fargs ++ ")]"
-              where fargs = intercalate ", " args 
+         show (FunctionVal args _ _) = "[function(" ++ fargs ++ ")]"
+              where fargs = intercalate ", " args
+         show (BuiltinFunctionVal name) = "[built-in function: " ++ name ++ "]"
 
 stringify :: Val -> String
 stringify (StringVal s) = "\"" ++ s ++ "\""
@@ -40,7 +45,8 @@ instance Num Val where
                 True -> 1
          signum (ObjectVal _) = 1
          signum UndefinedVal = 0
-         signum (FunctionVal _ _) = 1
+         signum (FunctionVal _ _ _) = 1
+         signum (BuiltinFunctionVal _) = 1
 
 --instance Fractional Val where
          -- (/) (IntVal i1) (IntVal 0) = StringVal "NaN"
