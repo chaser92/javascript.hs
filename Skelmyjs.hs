@@ -113,29 +113,21 @@ transExpr :: Expr -> Result
 transExpr x = case x of
   FunExpression funexpr  -> failure x
   AssignExpr lvalue expr  -> failure x
-  CondExpr expr1 expr2 expr3  -> failure x
   LOrExpr expr1 expr2  -> failure x
-  LAndrExpr expr1 expr2  -> failure x
-  BitOrExpr expr1 expr2  -> failure x
-  BitXorExpr expr1 expr2  -> failure x
-  BitAndExpr expr1 expr2  -> failure x
+  LAndExpr expr1 expr2  -> failure x
   EqExpr expr1 expr2  -> failure x
   NeqExpr expr1 expr2  -> failure x
   LessExpr expr1 expr2  -> failure x
   GreaterExpr expr1 expr2  -> failure x
   LeqExpr expr1 expr2  -> failure x
   GeqExpr expr1 expr2  -> failure x
-  ShlExpr expr1 expr2  -> failure x
-  ShrExpr expr1 expr2  -> failure x
   PlusExpr expr1 expr2  -> failure x
   MinusExpr expr1 expr2  -> failure x
   TimesExpr expr1 expr2  -> failure x
   DivExpr expr1 expr2  -> failure x
-  ModExpr expr1 expr2  -> failure x
-  PreincExpr expr  -> failure x
-  PredecExpr expr  -> failure x
+  PreincExpr lvalue  -> failure x
+  PredecExpr lvalue  -> failure x
   PreopExpr unaryop expr  -> failure x
-  TypeofExpr expr  -> failure x
   ParenExpr expr  -> failure x
   CallExpr lvalue params  -> failure x
   LiteralExpr literal  -> failure x
@@ -145,7 +137,6 @@ transExpr x = case x of
 transUnaryOp :: UnaryOp -> Result
 transUnaryOp x = case x of
   NegOp  -> failure x
-  TildeOp  -> failure x
 
 
 transElseClause :: ElseClause -> Result

@@ -3,6 +3,8 @@ module Types where
 import qualified Data.Map as M
 import Data.List
 import Absmyjs
+import Control.Monad.State
+import Control.Monad.Trans.Except
 
 type Loc = Int
 type Var = String
@@ -25,6 +27,8 @@ instance Show Val where
 stringify :: Val -> String
 stringify (StringVal s) = "\"" ++ s ++ "\""
 stringify val = show val
+
+iThrow text = lift $ throwE $ StringVal text
 
 instance Num Val where
          (+) (IntVal i1) (IntVal i2) = IntVal (i1 + i2)

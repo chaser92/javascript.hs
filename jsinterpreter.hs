@@ -12,7 +12,7 @@ import Control.Monad.Trans.Reader
 import Control.Monad.State
 
 exec (Progr stmts) = case runState (runExceptT (runReaderT (_exec stmts) Env.empty)) Mem.empty of
-     (Left err, _) -> putStrLn $ "Runtime error: " ++ err
+     (Left err, _) -> putStrLn $ "Runtime error: " ++ (show err)
      (Right output, _) -> putStrLn $ show output
      where _exec stmts = do
            Mem.init
@@ -20,7 +20,7 @@ exec (Progr stmts) = case runState (runExceptT (runReaderT (_exec stmts) Env.emp
            local (\x -> env) (iStmt (CSS (CS stmts)))
            local (\x -> env) (Env.get "output")
 
-iAssignQ [] val = lift $ throwE "Empty qualified list is not to be resolved"
+iAssignQ [] val = iThrow "Empty qualified list is not to be resolved"
 iAssignQ [expr] val = do
          firstName <- iExpr expr
          Env.set (show firstName) val
@@ -33,7 +33,7 @@ iAssignQ (expr:exprs) val = do
                          prop <- iExpr expr
                          case obj of
                               ObjectVal m -> return $ ObjectVal $ M.insert (show prop) val m
-                              o -> lift $ throwE $ (show o) ++ " is not an object"
+                              o -> iThrow $ (show o) ++ " is not an object"
                    _iAssignQ obj (expr:exprs) val = do
                          prop <- iExpr expr
                          case obj of
@@ -43,10 +43,10 @@ iAssignQ (expr:exprs) val = do
                                             Just _newObj -> do
                                                  newVal <- _iAssignQ _newObj exprs val
                                                  return $ ObjectVal $ M.insert (show prop) newVal m
-                                            Nothing -> lift $ throwE $ "Object " ++ (show obj) ++ " has no property " ++ (show prop)
-                              o -> lift $ throwE $ (show o) ++ " is not an object"
+                                            Nothing -> iThrow $ "Object " ++ (show obj) ++ " has no property " ++ (show prop)
+                              o -> iThrow $ (show o) ++ " is not an object"
 
-iRetrQ [] = lift $ throwE "Empty qualified list is not to be resolved"
+iRetrQ [] = iThrow "Empty qualified list is not to be resolved"
 iRetrQ [expr] = do
        firstName <- iExpr expr
        Env.get (show firstName)
@@ -62,7 +62,7 @@ iRetrQ (expr:exprs) = do
                                   case M.lookup (show nextN) map of
                                        Just x -> _iRetrQ x exprs
                                        Nothing -> _iRetrQ UndefinedVal exprs
-                             o -> lift $ throwE $ (show o) ++ " is not an object" 
+                             o -> iThrow $ (show o) ++ " is not an object" 
 
 iDecl (VarDecl (Ident name)) = do
       env <- ask
@@ -80,6 +80,7 @@ iDecl (FunDecl fun@(Fun ident _ _)) = do
       case ident of
            NoIdent -> return env
            JustIdent id -> iDecl (VarDeclAssign id (FunExpression fun))
+
 
 iStmt (CSS (CS statements)) = _exec statements where
       _exec [] = return ()
@@ -116,6 +117,19 @@ iStmt while@(WhileStmt cond stmt) = do
          iStmt stmt
          iStmt while) else return()
 
+iStmt (ThrowStmt e) = do
+      val <- iExpr e
+      lift $ throwE val
+
+iStmt (TryCatchStmt try (Ident excId) catch) = do
+      env <- ask
+      lift $ catchE (runReaderT (iStmt (CSS try)) env)
+           (\e -> runReaderT (runHandler e) env)
+           where runHandler e = do
+                 envWithException <- Env.assign excId
+                 local (\e -> envWithException) (Env.set excId e)
+                 local (\e -> envWithException) (iStmt (CSS catch))
+
 iExpr (ParenExpr e) = iExpr e
 
 iExpr (EvalExpr qi) = iRetrQ (Sys.qIdentResolve qi)
@@ -131,7 +145,7 @@ iExpr (CallExpr qi (ParamList params)) =
                retval <- Mem.getReturnVal
                Mem.clearReturnVal
                return retval
-           _ -> lift $ throwE $ (show fun) ++ " is not a function"
+           _ -> iThrow $ (show fun) ++ " is not a function"
       where _qiList = (Sys.qIdentResolve qi)
             _sysFuncId = case _qiList of
                        (LiteralExpr (StringLiteral s)):[] -> s
@@ -200,7 +214,7 @@ iExpr (LOrExpr e1 e2) = do
          v2 <- iExpr e2
          if isTruthy v2 then return v2 else return $ BoolVal False
 
-iExpr (LAndrExpr e1 e2) = do
+iExpr (LAndExpr e1 e2) = do
       v1 <- iExpr e1
       if (not $ isTruthy v1) then return v1 else do
          v2 <- iExpr e2
@@ -229,6 +243,16 @@ iExpr (GeqExpr e1 e2) = do
 iExpr (PreopExpr NegOp e1) = do
       v1 <- iExpr e1
       return $ BoolVal $ not $ isTruthy v1
+
+iExpr (PreincExpr l1) = do
+      val <- iRetrQ (Sys.qIdentResolve l1)
+      iAssignQ (Sys.qIdentResolve l1) (val + 1)
+      return $ val + 1
+
+iExpr (PredecExpr l1) = do
+      val <- iRetrQ (Sys.qIdentResolve l1)
+      iAssignQ (Sys.qIdentResolve l1) (val - 1)
+      return $ val - 1
 
 parseObjectLiteral list = _parseObjectLiteral list M.empty where
 _parseObjectLiteral [] m = return m

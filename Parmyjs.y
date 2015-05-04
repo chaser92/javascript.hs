@@ -17,52 +17,43 @@ import ErrM
 %token
   '!' { PT _ (TS _ 1) }
   '!==' { PT _ (TS _ 2) }
-  '%' { PT _ (TS _ 3) }
-  '&' { PT _ (TS _ 4) }
-  '&&' { PT _ (TS _ 5) }
-  '(' { PT _ (TS _ 6) }
-  ')' { PT _ (TS _ 7) }
-  '*' { PT _ (TS _ 8) }
-  '+' { PT _ (TS _ 9) }
-  '++' { PT _ (TS _ 10) }
-  ',' { PT _ (TS _ 11) }
-  '-' { PT _ (TS _ 12) }
-  '--' { PT _ (TS _ 13) }
-  '.' { PT _ (TS _ 14) }
-  '/' { PT _ (TS _ 15) }
-  ':' { PT _ (TS _ 16) }
-  ';' { PT _ (TS _ 17) }
-  '<' { PT _ (TS _ 18) }
-  '<<' { PT _ (TS _ 19) }
-  '<=' { PT _ (TS _ 20) }
-  '=' { PT _ (TS _ 21) }
-  '===' { PT _ (TS _ 22) }
-  '>' { PT _ (TS _ 23) }
-  '>=' { PT _ (TS _ 24) }
-  '>>' { PT _ (TS _ 25) }
-  '?' { PT _ (TS _ 26) }
-  '[' { PT _ (TS _ 27) }
-  ']' { PT _ (TS _ 28) }
-  '^' { PT _ (TS _ 29) }
-  'catch' { PT _ (TS _ 30) }
-  'else' { PT _ (TS _ 31) }
-  'false' { PT _ (TS _ 32) }
-  'function' { PT _ (TS _ 33) }
-  'if' { PT _ (TS _ 34) }
-  'return' { PT _ (TS _ 35) }
-  'return;' { PT _ (TS _ 36) }
-  'throw' { PT _ (TS _ 37) }
-  'true' { PT _ (TS _ 38) }
-  'try' { PT _ (TS _ 39) }
-  'typeof' { PT _ (TS _ 40) }
-  'undefined' { PT _ (TS _ 41) }
-  'var' { PT _ (TS _ 42) }
-  'while' { PT _ (TS _ 43) }
-  '{' { PT _ (TS _ 44) }
-  '|' { PT _ (TS _ 45) }
-  '||' { PT _ (TS _ 46) }
-  '}' { PT _ (TS _ 47) }
-  '~' { PT _ (TS _ 48) }
+  '&&' { PT _ (TS _ 3) }
+  '(' { PT _ (TS _ 4) }
+  ')' { PT _ (TS _ 5) }
+  '*' { PT _ (TS _ 6) }
+  '+' { PT _ (TS _ 7) }
+  '++' { PT _ (TS _ 8) }
+  ',' { PT _ (TS _ 9) }
+  '-' { PT _ (TS _ 10) }
+  '--' { PT _ (TS _ 11) }
+  '.' { PT _ (TS _ 12) }
+  '/' { PT _ (TS _ 13) }
+  ':' { PT _ (TS _ 14) }
+  ';' { PT _ (TS _ 15) }
+  '<' { PT _ (TS _ 16) }
+  '<=' { PT _ (TS _ 17) }
+  '=' { PT _ (TS _ 18) }
+  '===' { PT _ (TS _ 19) }
+  '>' { PT _ (TS _ 20) }
+  '>=' { PT _ (TS _ 21) }
+  '[' { PT _ (TS _ 22) }
+  ']' { PT _ (TS _ 23) }
+  'catch' { PT _ (TS _ 24) }
+  'else' { PT _ (TS _ 25) }
+  'false' { PT _ (TS _ 26) }
+  'function' { PT _ (TS _ 27) }
+  'if' { PT _ (TS _ 28) }
+  'return' { PT _ (TS _ 29) }
+  'return;' { PT _ (TS _ 30) }
+  'throw' { PT _ (TS _ 31) }
+  'true' { PT _ (TS _ 32) }
+  'try' { PT _ (TS _ 33) }
+  'undefined' { PT _ (TS _ 34) }
+  'var' { PT _ (TS _ 35) }
+  'while' { PT _ (TS _ 36) }
+  '{' { PT _ (TS _ 37) }
+  '||' { PT _ (TS _ 38) }
+  '}' { PT _ (TS _ 39) }
 
 L_ident  { PT _ (TV $$) }
 L_quoted { PT _ (TL $$) }
@@ -190,100 +181,71 @@ Expr : FunExpr { FunExpression $1 }
   | Expr1 { $1 }
 
 
+Expr2 :: { Expr }
+Expr2 : Expr2 '||' Expr3 { LOrExpr $1 $3 } 
+  | Expr3 { $1 }
+
+
 Expr3 :: { Expr }
-Expr3 : Expr4 '?' Expr ':' Expr3 { CondExpr $1 $3 $5 } 
+Expr3 : Expr3 '&&' Expr4 { LAndExpr $1 $3 } 
   | Expr4 { $1 }
 
 
 Expr4 :: { Expr }
-Expr4 : Expr4 '||' Expr5 { LOrExpr $1 $3 } 
+Expr4 : Expr4 '===' Expr5 { EqExpr $1 $3 } 
+  | Expr4 '!==' Expr5 { NeqExpr $1 $3 }
   | Expr5 { $1 }
 
 
 Expr5 :: { Expr }
-Expr5 : Expr5 '&&' Expr6 { LAndrExpr $1 $3 } 
+Expr5 : Expr5 '<' Expr6 { LessExpr $1 $3 } 
+  | Expr5 '>' Expr6 { GreaterExpr $1 $3 }
+  | Expr5 '<=' Expr6 { LeqExpr $1 $3 }
+  | Expr5 '>=' Expr6 { GeqExpr $1 $3 }
   | Expr6 { $1 }
 
 
 Expr6 :: { Expr }
-Expr6 : Expr6 '|' Expr7 { BitOrExpr $1 $3 } 
+Expr6 : Expr6 '+' Expr7 { PlusExpr $1 $3 } 
+  | Expr6 '-' Expr7 { MinusExpr $1 $3 }
+  | Expr6 '*' Expr7 { TimesExpr $1 $3 }
+  | Expr6 '/' Expr7 { DivExpr $1 $3 }
   | Expr7 { $1 }
 
 
 Expr7 :: { Expr }
-Expr7 : Expr7 '^' Expr8 { BitXorExpr $1 $3 } 
+Expr7 : '++' Lvalue { PreincExpr $2 } 
+  | '--' Lvalue { PredecExpr $2 }
   | Expr8 { $1 }
 
 
 Expr8 :: { Expr }
-Expr8 : Expr8 '&' Expr9 { BitAndExpr $1 $3 } 
+Expr8 : UnaryOp Expr9 { PreopExpr $1 $2 } 
   | Expr9 { $1 }
 
 
 Expr9 :: { Expr }
-Expr9 : Expr9 '===' Expr10 { EqExpr $1 $3 } 
-  | Expr9 '!==' Expr10 { NeqExpr $1 $3 }
+Expr9 : '(' Expr ')' { ParenExpr $2 } 
   | Expr10 { $1 }
 
 
 Expr10 :: { Expr }
-Expr10 : Expr10 '<' Expr11 { LessExpr $1 $3 } 
-  | Expr10 '>' Expr11 { GreaterExpr $1 $3 }
-  | Expr10 '<=' Expr11 { LeqExpr $1 $3 }
-  | Expr10 '>=' Expr11 { GeqExpr $1 $3 }
+Expr10 : Lvalue Params { CallExpr $1 $2 } 
   | Expr11 { $1 }
 
 
 Expr11 :: { Expr }
-Expr11 : Expr11 '<<' Expr12 { ShlExpr $1 $3 } 
+Expr11 : Literal { LiteralExpr $1 } 
   | Expr12 { $1 }
 
 
 Expr12 :: { Expr }
-Expr12 : Expr12 '>>' Expr13 { ShrExpr $1 $3 } 
-  | Expr12 '+' Expr13 { PlusExpr $1 $3 }
-  | Expr12 '-' Expr13 { MinusExpr $1 $3 }
+Expr12 : Lvalue { EvalExpr $1 } 
   | Expr13 { $1 }
-
-
-Expr13 :: { Expr }
-Expr13 : Expr13 '*' Expr14 { TimesExpr $1 $3 } 
-  | Expr13 '/' Expr14 { DivExpr $1 $3 }
-  | Expr13 '%' Expr14 { ModExpr $1 $3 }
-  | Expr14 { $1 }
-
-
-Expr14 :: { Expr }
-Expr14 : '++' Expr15 { PreincExpr $2 } 
-  | '--' Expr15 { PredecExpr $2 }
-  | UnaryOp Expr15 { PreopExpr $1 $2 }
-  | 'typeof' Expr15 { TypeofExpr $2 }
-  | Expr15 { $1 }
-
-
-Expr15 :: { Expr }
-Expr15 : '(' Expr ')' { ParenExpr $2 } 
-  | Expr16 { $1 }
-
-
-Expr16 :: { Expr }
-Expr16 : Lvalue Params { CallExpr $1 $2 } 
-  | Expr17 { $1 }
-
-
-Expr17 :: { Expr }
-Expr17 : Literal { LiteralExpr $1 } 
-  | Expr18 { $1 }
-
-
-Expr18 :: { Expr }
-Expr18 : Lvalue { EvalExpr $1 } 
-  | '(' Expr ')' { $2 }
 
 
 UnaryOp :: { UnaryOp }
 UnaryOp : '!' { NegOp } 
-  | '~' { TildeOp }
 
 
 ElseClause :: { ElseClause }
@@ -295,8 +257,28 @@ Expr1 :: { Expr }
 Expr1 : Expr2 { $1 } 
 
 
-Expr2 :: { Expr }
-Expr2 : Expr3 { $1 } 
+Expr13 :: { Expr }
+Expr13 : Expr14 { $1 } 
+
+
+Expr14 :: { Expr }
+Expr14 : Expr15 { $1 } 
+
+
+Expr15 :: { Expr }
+Expr15 : Expr16 { $1 } 
+
+
+Expr16 :: { Expr }
+Expr16 : Expr17 { $1 } 
+
+
+Expr17 :: { Expr }
+Expr17 : Expr18 { $1 } 
+
+
+Expr18 :: { Expr }
+Expr18 : '(' Expr ')' { $2 } 
 
 
 

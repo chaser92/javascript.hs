@@ -20,7 +20,7 @@ $i = [$l $d _ ']          -- identifier character
 $u = [\0-\255]          -- universal: any character
 
 @rsyms =    -- symbols and non-identifier-like reserved words
-   \; | \= | \{ | \} | \. | \[ | \] | \( | \) | \, | \: | \? | \| \| | \& \& | \| | \^ | \& | \= \= \= | \! \= \= | \< | \> | \< \= | \> \= | \< \< | \> \> | \+ | \- | \* | \/ | \% | \+ \+ | \- \- | \! | \~ | "return" \;
+   \; | \= | \{ | \} | \. | \[ | \] | \( | \) | \, | \: | \| \| | \& \& | \= \= \= | \! \= \= | \< | \> | \< \= | \> \= | \+ | \- | \* | \/ | \+ \+ | \- \- | \! | "return" \;
 
 :-
 "//" [.]* ; -- Toss single line comments
@@ -97,7 +97,7 @@ eitherResIdent tv s = treeFind resWords
                               | s == a = t
 
 resWords :: BTree
-resWords = b ">>" 25 (b "--" 13 (b ")" 7 (b "&" 4 (b "!==" 2 (b "!" 1 N N) (b "%" 3 N N)) (b "(" 6 (b "&&" 5 N N) N)) (b "++" 10 (b "+" 9 (b "*" 8 N N) N) (b "-" 12 (b "," 11 N N) N))) (b "<<" 19 (b ":" 16 (b "/" 15 (b "." 14 N N) N) (b "<" 18 (b ";" 17 N N) N)) (b "===" 22 (b "=" 21 (b "<=" 20 N N) N) (b ">=" 24 (b ">" 23 N N) N)))) (b "throw" 37 (b "else" 31 (b "]" 28 (b "[" 27 (b "?" 26 N N) N) (b "catch" 30 (b "^" 29 N N) N)) (b "if" 34 (b "function" 33 (b "false" 32 N N) N) (b "return;" 36 (b "return" 35 N N) N))) (b "while" 43 (b "typeof" 40 (b "try" 39 (b "true" 38 N N) N) (b "var" 42 (b "undefined" 41 N N) N)) (b "||" 46 (b "|" 45 (b "{" 44 N N) N) (b "~" 48 (b "}" 47 N N) N))))
+resWords = b ">" 20 (b "-" 10 (b ")" 5 (b "&&" 3 (b "!==" 2 (b "!" 1 N N) N) (b "(" 4 N N)) (b "++" 8 (b "+" 7 (b "*" 6 N N) N) (b "," 9 N N))) (b ";" 15 (b "/" 13 (b "." 12 (b "--" 11 N N) N) (b ":" 14 N N)) (b "=" 18 (b "<=" 17 (b "<" 16 N N) N) (b "===" 19 N N)))) (b "return;" 30 (b "else" 25 (b "]" 23 (b "[" 22 (b ">=" 21 N N) N) (b "catch" 24 N N)) (b "if" 28 (b "function" 27 (b "false" 26 N N) N) (b "return" 29 N N))) (b "var" 35 (b "try" 33 (b "true" 32 (b "throw" 31 N N) N) (b "undefined" 34 N N)) (b "||" 38 (b "{" 37 (b "while" 36 N N) N) (b "}" 39 N N))))
    where b s n = let bs = id s
                   in B bs (TS bs n)
 

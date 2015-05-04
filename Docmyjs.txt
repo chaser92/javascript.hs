@@ -33,19 +33,16 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in myjs are the following:
   | ``catch`` | ``else`` | ``false`` | ``function``
   | ``if`` | ``return`` | ``throw`` | ``true``
-  | ``try`` | ``typeof`` | ``undefined`` | ``var``
-  | ``while`` |  |  | 
+  | ``try`` | ``undefined`` | ``var`` | ``while``
 
 The symbols used in myjs are the following:
   | ; | = | { | }
   | . | [ | ] | (
-  | ) | , | : | ?
-  | || | && | | | ^
-  | & | === | !== | <
-  | > | <= | >= | <<
-  | >> | + | - | *
-  | / | % | ++ | --
-  | ! | ~ | return; | 
+  | ) | , | : | ||
+  | && | === | !== | <
+  | > | <= | >= | +
+  | - | * | / | ++
+  | -- | ! | return; | 
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -108,54 +105,45 @@ All other symbols are terminals.
   | //Expr// | -> | //FunExpr// 
   |  |  **|**  | //Lvalue// ``=`` //Expr// 
   |  |  **|**  | //Expr1// 
-  | //Expr3// | -> | //Expr4// ``?`` //Expr// ``:`` //Expr3// 
+  | //Expr2// | -> | //Expr2// ``||`` //Expr3// 
+  |  |  **|**  | //Expr3// 
+  | //Expr3// | -> | //Expr3// ``&&`` //Expr4// 
   |  |  **|**  | //Expr4// 
-  | //Expr4// | -> | //Expr4// ``||`` //Expr5// 
+  | //Expr4// | -> | //Expr4// ``===`` //Expr5// 
+  |  |  **|**  | //Expr4// ``!==`` //Expr5// 
   |  |  **|**  | //Expr5// 
-  | //Expr5// | -> | //Expr5// ``&&`` //Expr6// 
+  | //Expr5// | -> | //Expr5// ``<`` //Expr6// 
+  |  |  **|**  | //Expr5// ``>`` //Expr6// 
+  |  |  **|**  | //Expr5// ``<=`` //Expr6// 
+  |  |  **|**  | //Expr5// ``>=`` //Expr6// 
   |  |  **|**  | //Expr6// 
-  | //Expr6// | -> | //Expr6// ``|`` //Expr7// 
+  | //Expr6// | -> | //Expr6// ``+`` //Expr7// 
+  |  |  **|**  | //Expr6// ``-`` //Expr7// 
+  |  |  **|**  | //Expr6// ``*`` //Expr7// 
+  |  |  **|**  | //Expr6// ``/`` //Expr7// 
   |  |  **|**  | //Expr7// 
-  | //Expr7// | -> | //Expr7// ``^`` //Expr8// 
+  | //Expr7// | -> | ``++`` //Lvalue// 
+  |  |  **|**  | ``--`` //Lvalue// 
   |  |  **|**  | //Expr8// 
-  | //Expr8// | -> | //Expr8// ``&`` //Expr9// 
+  | //Expr8// | -> | //UnaryOp// //Expr9// 
   |  |  **|**  | //Expr9// 
-  | //Expr9// | -> | //Expr9// ``===`` //Expr10// 
-  |  |  **|**  | //Expr9// ``!==`` //Expr10// 
+  | //Expr9// | -> | ``(`` //Expr// ``)`` 
   |  |  **|**  | //Expr10// 
-  | //Expr10// | -> | //Expr10// ``<`` //Expr11// 
-  |  |  **|**  | //Expr10// ``>`` //Expr11// 
-  |  |  **|**  | //Expr10// ``<=`` //Expr11// 
-  |  |  **|**  | //Expr10// ``>=`` //Expr11// 
+  | //Expr10// | -> | //Lvalue// //Params// 
   |  |  **|**  | //Expr11// 
-  | //Expr11// | -> | //Expr11// ``<<`` //Expr12// 
+  | //Expr11// | -> | //Literal// 
   |  |  **|**  | //Expr12// 
-  | //Expr12// | -> | //Expr12// ``>>`` //Expr13// 
-  |  |  **|**  | //Expr12// ``+`` //Expr13// 
-  |  |  **|**  | //Expr12// ``-`` //Expr13// 
+  | //Expr12// | -> | //Lvalue// 
   |  |  **|**  | //Expr13// 
-  | //Expr13// | -> | //Expr13// ``*`` //Expr14// 
-  |  |  **|**  | //Expr13// ``/`` //Expr14// 
-  |  |  **|**  | //Expr13// ``%`` //Expr14// 
-  |  |  **|**  | //Expr14// 
-  | //Expr14// | -> | ``++`` //Expr15// 
-  |  |  **|**  | ``--`` //Expr15// 
-  |  |  **|**  | //UnaryOp// //Expr15// 
-  |  |  **|**  | ``typeof`` //Expr15// 
-  |  |  **|**  | //Expr15// 
-  | //Expr15// | -> | ``(`` //Expr// ``)`` 
-  |  |  **|**  | //Expr16// 
-  | //Expr16// | -> | //Lvalue// //Params// 
-  |  |  **|**  | //Expr17// 
-  | //Expr17// | -> | //Literal// 
-  |  |  **|**  | //Expr18// 
-  | //Expr18// | -> | //Lvalue// 
-  |  |  **|**  | ``(`` //Expr// ``)`` 
   | //UnaryOp// | -> | ``!`` 
-  |  |  **|**  | ``~`` 
   | //ElseClause// | -> | ``else`` //Stmt// 
   |  |  **|**  | **eps**
   | //Expr1// | -> | //Expr2// 
-  | //Expr2// | -> | //Expr3// 
+  | //Expr13// | -> | //Expr14// 
+  | //Expr14// | -> | //Expr15// 
+  | //Expr15// | -> | //Expr16// 
+  | //Expr16// | -> | //Expr17// 
+  | //Expr17// | -> | //Expr18// 
+  | //Expr18// | -> | ``(`` //Expr// ``)`` 
 
 

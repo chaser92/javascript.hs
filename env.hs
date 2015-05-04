@@ -4,6 +4,8 @@ import Control.Monad.State
 import Control.Monad.Trans.Reader
 import Control.Monad.Trans.Except
 
+import Types
+
 import qualified Data.Map as M
 import qualified Memory as Mem
 
@@ -13,7 +15,7 @@ empty = M.empty
 resolve name = do
         env <- ask
         case M.lookup name env of
-             Nothing -> lift (throwE $ name ++ " is not defined")
+             Nothing -> iThrow $ name ++ " is not defined"
              Just k -> return k
 
 assign name = do

@@ -14,7 +14,7 @@ data Memory = Mem { store :: Store, lastLoc :: Loc }
 
 empty = Mem M.empty $ -1
 
-init :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT [Char] m0)) => t0 (ExceptT [Char] m0) ()
+init :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT Val m0)) => t0 (ExceptT Val m0) ()
 init = do
      alloc
      setReturnVal UndefinedVal
@@ -22,13 +22,13 @@ init = do
 getVar loc = do
        (Mem store _) <- get
        case M.lookup loc store of
-            Nothing -> lift $ throwE $ "Invalid memory location read: " ++ (show loc)
+            Nothing -> iThrow $ "Invalid memory location read: " ++ (show loc)
             Just k -> return k
 
 updateVar fun loc = do
           (Mem store lastLoc) <- get
           case M.lookup loc store of
-               Nothing -> lift $ throwE $ "Invalid memory location written: " ++ (show loc)
+               Nothing -> iThrow $ "Invalid memory location written: " ++ (show loc)
                Just k -> put $ Mem (M.insert loc (fun k) store) lastLoc
 
 alloc :: MonadState Memory m => m Loc
@@ -42,11 +42,11 @@ dealloc loc = modify (\(Mem store lastLoc) ->
 
 setVar loc value = updateVar (\x -> value) loc
 
-setReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT [Char] m0)) => Val -> t0 (ExceptT [Char] m0) ()
+setReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT Val m0)) => Val -> t0 (ExceptT Val m0) ()
 setReturnVal val = setVar 0 val
 
-clearReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT [Char] m0)) => t0 (ExceptT [Char] m0) ()
+clearReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT Val m0)) => t0 (ExceptT Val m0) ()
 clearReturnVal = setReturnVal UndefinedVal
 
-getReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT [Char] m0)) => t0 (ExceptT [Char] m0) Val
+getReturnVal :: MonadTrans t0 => Monad m0 => MonadState Memory (t0 (ExceptT Val m0)) => t0 (ExceptT Val m0) Val
 getReturnVal = getVar 0

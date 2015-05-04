@@ -91,29 +91,21 @@ data FunExpr =
 data Expr =
    FunExpression FunExpr
  | AssignExpr Lvalue Expr
- | CondExpr Expr Expr Expr
  | LOrExpr Expr Expr
- | LAndrExpr Expr Expr
- | BitOrExpr Expr Expr
- | BitXorExpr Expr Expr
- | BitAndExpr Expr Expr
+ | LAndExpr Expr Expr
  | EqExpr Expr Expr
  | NeqExpr Expr Expr
  | LessExpr Expr Expr
  | GreaterExpr Expr Expr
  | LeqExpr Expr Expr
  | GeqExpr Expr Expr
- | ShlExpr Expr Expr
- | ShrExpr Expr Expr
  | PlusExpr Expr Expr
  | MinusExpr Expr Expr
  | TimesExpr Expr Expr
  | DivExpr Expr Expr
- | ModExpr Expr Expr
- | PreincExpr Expr
- | PredecExpr Expr
+ | PreincExpr Lvalue
+ | PredecExpr Lvalue
  | PreopExpr UnaryOp Expr
- | TypeofExpr Expr
  | ParenExpr Expr
  | CallExpr Lvalue Params
  | LiteralExpr Literal
@@ -122,7 +114,6 @@ data Expr =
 
 data UnaryOp =
    NegOp
- | TildeOp
   deriving (Eq,Ord,Show,Read)
 
 data ElseClause =
